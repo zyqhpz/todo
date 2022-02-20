@@ -35,23 +35,26 @@ class _HomepageState extends State<Homepage> {
               children: [
                 Container(
                   margin: EdgeInsets.only(
-                    bottom: 32,
+                    bottom: 24,
                   ),
                 ),
                 Expanded(
-                  child: ListView(
-                    children: [
-                      TaskCardWidget(
-                        title: 'Task 1',
-                        description: 'This is a task description for task 1',
-                      ),
-                      TaskCardWidget(),
-                      TaskCardWidget(),
-                      TaskCardWidget(),
-                      TaskCardWidget(),
-                      TaskCardWidget(),
-                      TaskCardWidget(),
-                    ],
+                  child: ScrollConfiguration(
+                    behavior: NoGlowBehavior(),
+                    child: ListView(
+                      children: [
+                        TaskCardWidget(
+                          title: 'Task 1',
+                          description: 'This is a task description for task 1',
+                        ),
+                        TaskCardWidget(),
+                        TaskCardWidget(),
+                        TaskCardWidget(),
+                        TaskCardWidget(),
+                        TaskCardWidget(),
+                        TaskCardWidget(),
+                      ],
+                    ),
                   ),
                 ),
               ],

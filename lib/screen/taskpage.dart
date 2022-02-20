@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo/database_helper.dart';
+
+import '../model/task.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
@@ -24,7 +27,7 @@ class _TaskPageState extends State<TaskPage> {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.of(context);
+                            Navigator.pop(context);
                           },
                           child: Padding(
                             padding: EdgeInsets.all(24),
@@ -36,6 +39,20 @@ class _TaskPageState extends State<TaskPage> {
                         ),
                         Expanded(
                           child: TextField(
+                            onSubmitted: (value) {
+                              DatabaseHelper _dbhelper = DatabaseHelper();
+
+                              Task task = Task(
+                                id: null,
+                                title: value,
+                                description: '',
+                              );
+
+                              if (value != null) {
+                                _dbhelper.insertTask(task);
+                              }
+                              print('new task has been added.');
+                            },
                             decoration: InputDecoration(
                                 hintText: 'Enter task title',
                                 border: InputBorder.none),
@@ -63,6 +80,35 @@ class _TaskPageState extends State<TaskPage> {
                     ),
                   )
                 ],
+              ),
+              Positioned(
+                bottom: 24,
+                right: 24,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TaskPage(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      //color: Color(0xFFFFCF00),
+                      color: Color.fromARGB(255, 0, 183, 255),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
