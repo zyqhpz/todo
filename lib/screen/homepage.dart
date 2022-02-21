@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todo/database_helper.dart';
 import 'package:todo/screen/taskpage.dart';
 import 'package:todo/screen/widgets.dart';
+
+import '../model/task.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -10,6 +13,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  DatabaseHelper _dbHelper = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,19 +46,38 @@ class _HomepageState extends State<Homepage> {
                 Expanded(
                   child: ScrollConfiguration(
                     behavior: NoGlowBehavior(),
-                    child: ListView(
-                      children: [
-                        TaskCardWidget(
-                          title: 'Task 1',
-                          description: 'This is a task description for task 1',
-                        ),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                      ],
+                    child: FutureBuilder(
+                      initialData: [],
+                      future: _dbHelper.getTasks(),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        // var data = (snapshot.data as List<Task>).toList();
+                        var data = snapshot.data;
+                        return ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TaskPage(
+                                      task: data[index],
+                                    ),
+                                  ),
+                                ).then(
+                                  (value) => setState(() {
+                                    // data.removeAt(index);
+                                  }),
+                                );
+                              },
+                              child: TaskCardWidget(
+                                title: data[index].title,
+                                description: data[index].description,
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -64,8 +88,19 @@ class _HomepageState extends State<Homepage> {
               right: 0,
               child: FloatingActionButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TaskPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TaskPage(
+                        task: Task(
+                          title: '',
+                          description: '',
+                        ),
+                      ),
+                    ),
+                  ).then((value) {
+                    setState(() {});
+                  });
                 },
                 child: Icon(Icons.add),
               ),

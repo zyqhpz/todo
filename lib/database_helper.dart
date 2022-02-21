@@ -40,4 +40,46 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  Future<void> updateTask(Task task) async {
+    Database db = await database();
+    // await db.update(
+    //   'tasks',
+    //   task.toMap(),
+    //   where: 'id = ?',
+    //   whereArgs: [task.id],
+    // );
+    await db.rawUpdate(
+      'UPDATE tasks SET title = ?, description = ? WHERE id = ?',
+      [task.title, task.description, task.id],
+    );
+  }
+
+  Future<void> updateTaskTitle(int? id, String title) async {
+    Database db = await database();
+    await db.rawUpdate(
+      'UPDATE tasks SET title = ? WHERE id = ?',
+      [title, id],
+    );
+  }
+
+  Future<void> updateDescription(String description, int? id) async {
+    Database db = await database();
+    await db.rawUpdate(
+      'UPDATE tasks SET description = ? WHERE id = ?',
+      [description, id],
+    );
+  }
+
+  Future<List<Task>> getTasks() async {
+    Database _db = await database();
+    List<Map<String, dynamic>> taskMap = await _db.query('tasks');
+    return List.generate(taskMap.length, (i) {
+      return Task(
+        id: taskMap[i]['id'],
+        title: taskMap[i]['title'],
+        description: taskMap[i]['description'],
+      );
+    });
+  }
 }
